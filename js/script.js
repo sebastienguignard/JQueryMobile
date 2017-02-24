@@ -1,39 +1,32 @@
-var checklists = {
-    1: {
-        name: 'checklist1',
-        tasks : [
-            {name: 'Tâche1', done: true},
-            {name: 'Tâche2', done: false},
-            {name: 'Tâche3', done: false},
-        ]
-    },
-    2: {
-        name:'checklist2',
-        tasks : [
-            {name: 'Tâche1', done: true},
-            {name: 'Tâche2', done: false},
-            {name: 'Tâche3', done: true},
-        ]
-    }
-}
-
-$(document).on('pageinit', function(){
+$(document).on('pageinit', function() {
 
     $.mobile.toolbar.prototype.options.backBtnText = "retour";
     $.mobile.toolbar.prototype.options.addBackBtn = true;
+
+
 });
 
 $(document).on( "pagebeforeshow", function( event ) {
     console.log("pagebeforeshow");
+    $.getJSON('checklists.json', function (json) {
+        addToListview(json);
+    });
 } );
 
+function addToListview(json) {
+    $("#listview").html('');
+    $.each(json, function (i, id) {
+        $('#listview').append(
+            '<li><a href="view.html" data-transition="slidefade">'+ id.name +'</a>'+
+            '<a href="form.html" data-icon="gear" data-transition="slidefade">Modifier la checklist</a>'+
+            '</li>'
+        );
+        console.log(id.name);
+    });
+    $("#listview").listview("refresh");
+}
 
 
-
-
-$(document).on( "pagebeforecreate", function( event ) {
-    console.log("pagebeforecreate avant autre page ");
-} );
 $(document).on( "hashchange", function( event ) {
     console.log("hashchange");
 } );
@@ -48,6 +41,7 @@ $(document).on( "orientationchange event", function( event ) {
 } );
 $(document).on( "pagebeforechange", function( event ) {
     console.log("pagebeforechange");
+
 } );
 $(document).on( "pagebeforehide", function( event ) {
     console.log("pagebeforehide");
@@ -61,12 +55,14 @@ $(document).on( "pagechange", function( event ) {
 } );
 $(document).on( "pagebeforecreate", function( event ) {
     console.log("pagebeforecreate avant autre page ");
+
 } );
 $(document).on( "pagechangefailed", function( event ) {
     console.log("pagechangefailed");
 } );
 $(document).on( "pagecreate", function( event ) {
     console.log("pagecreate");
+
 } );
 $(document).on( "pagehide", function( event ) {
     console.log("pagehide");
