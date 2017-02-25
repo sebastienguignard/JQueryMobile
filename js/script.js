@@ -1,3 +1,4 @@
+
 $(document).on('pageinit', function() {
 
     $.mobile.toolbar.prototype.options.backBtnText = "retour";
@@ -7,78 +8,38 @@ $(document).on('pageinit', function() {
 });
 
 $(document).on( "pagebeforeshow", function( event ) {
-    console.log("pagebeforeshow");
     $.getJSON('checklists.json', function (json) {
-        addToListview(json);
+        filledListview(json);
     });
+    $id = getUrlParameter("id");
 } );
 
-function addToListview(json) {
-    $("#listview").html('');
+
+function filledListview(json) {
+    $("#indexListview").html('');
     $.each(json, function (i, id) {
-        $('#listview').append(
-            '<li><a href="view.html" data-transition="slidefade">'+ id.name +'</a>'+
-            '<a href="form.html" data-icon="gear" data-transition="slidefade">Modifier la checklist</a>'+
+        $('#indexListview').append(
+            '<li><a href="view.html?id='+i+'" data-transition="slidefade">'+ id.name +'</a>'+
+            '<a href="form.html?id='+i+'" data-icon="gear" data-transition="slidefade">Modifier la checklist</a>'+
             '</li>'
         );
         console.log(id.name);
     });
-    $("#listview").listview("refresh");
+    $("#indexListview").listview("refresh");
+
+    console.log(getUrlParameter("id"));
 }
 
+var getUrlParameter = function(paramName) {
+    var urlParams = window.location.href.split('?')[1];
+    console.log(urlParams);
+    if (urlParams) {
+        var params = urlParams.split('&');
 
-$(document).on( "hashchange", function( event ) {
-    console.log("hashchange");
-} );
-$(document).on( "mobileinit", function( event ) {
-    console.log("mobileinit");
-} );
-$(document).on( "navigate", function( event ) {
-    console.log("navigate");
-} );
-$(document).on( "orientationchange event", function( event ) {
-    console.log("orientationchange event");
-} );
-$(document).on( "pagebeforechange", function( event ) {
-    console.log("pagebeforechange");
-
-} );
-$(document).on( "pagebeforehide", function( event ) {
-    console.log("pagebeforehide");
-} );
-$(document).on( "pagebeforeload", function( event ) {
-    console.log("pagebeforeload");
-} );
-
-$(document).on( "pagechange", function( event ) {
-    console.log("pagechange");
-} );
-$(document).on( "pagebeforecreate", function( event ) {
-    console.log("pagebeforecreate avant autre page ");
-
-} );
-$(document).on( "pagechangefailed", function( event ) {
-    console.log("pagechangefailed");
-} );
-$(document).on( "pagecreate", function( event ) {
-    console.log("pagecreate");
-
-} );
-$(document).on( "pagehide", function( event ) {
-    console.log("pagehide");
-} );
-$(document).on( "pageinit", function( event ) {
-    console.log("pageinit");
-} );
-$(document).on( "pageload", function( event ) {
-    console.log("pageload");
-} );
-$(document).on( "pageloadfailed", function( event ) {
-    console.log("pageloadfailed");
-} );
-$(document).on( "pageremove", function( event ) {
-    console.log("pageremove");
-} );
-$(document).on( "pageshow", function( event ) {
-    console.log("pageshow");
-} );
+        for (var i = 0; i <  params.length; i++) {
+            var param = params[i].split('=');
+            if (param[0] == paramName)
+                return param[1];
+        }
+    }
+}
