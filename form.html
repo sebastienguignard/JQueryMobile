@@ -5,20 +5,15 @@
         </div>
     </div>
 
-    <div role="main" class="ui-content">
-        <input type="text" name="checklistName" placeholder="Nom de la checklist"><br>
-        <form>
-            <fieldset data-role="controlgroup">
-                <input type="text" placeholder="Tâche 1">
-                <input type="text" placeholder="Tâche 2">
-                <input type="text" placeholder="Tâche 3">
-                <input type="text" placeholder="Tâche 4">
-            </fieldset>
-        </form>
-        <button  data-icon="plus" data-iconshadow="false" data-theme="b">Ajouter une tâche</button>
+    <div role="main" class="ui-content" >
+        <div id="listContent">
+
+        </div>
+
+        <button  id="addTask" data-icon="plus" data-iconshadow="false" data-theme="b">Ajouter une tâche</button>
     </div>
 
     <div data-role="footer">
-        <a href="#" class="ui-btn-left ui-btn ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-check">Enregistrer</a>
+        <a id="saveTaskList" class="ui-btn-left ui-btn ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-check" >Enregistrer</a>
     </div>
 </div>
