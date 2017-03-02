@@ -1,12 +1,10 @@
 $jsonFile = null ;
 $id = 0;
 
-$(document).on('pageinit', function() {
+$(document).on("pageinit","#list", function() {
     $.mobile.toolbar.prototype.options.backBtnText = "retour";
     $.mobile.toolbar.prototype.options.addBackBtn = true;
-});
 
-$(document).on( "pagebeforeshow","#list", function( event ) {
     $taskList = localStorage.getItem("taskList");
     if ($taskList == null){
         $.getJSON('checklists.json', function(json, textStatus) {
@@ -17,6 +15,11 @@ $(document).on( "pagebeforeshow","#list", function( event ) {
     else {
         $jsonFile = JSON.parse($taskList);
     }
+
+});
+
+$(document).on( "pagebeforeshow","#list", function( event ) {
+
     filledListview($jsonFile);
 } );
 
@@ -44,12 +47,12 @@ $(document).on("pagebeforeshow","#form",function(){
     }
     $content = '';
     $listname = ($id!=0)?$jsonFile[$id].name:'';
-    $content += '<input type="text" value="'+$listname+'" placeholder="Nom de la checklist"><br>';
+    $content += '<input id="title" type="text" value="'+$listname+'" placeholder="Nom de la checklist"><br>';
 
     $content += '<div data-role="controlgroup">';
     for(i=0; i<$numberOfElement; i++){
         $taskname = ($id!=0)?$jsonFile[$id].tasks[i].name:"";
-        $content +='<input ame ="task'+i+'" type="text" value="'+$taskname+'" placeholder="Votre tâche">';
+        $content +='<input name ="task'+i+'" type="text" value="'+$taskname+'" placeholder="Votre tâche">';
     }
     $content += '</div>';
     $('#form #listContent').html($content).trigger('create');
@@ -79,7 +82,7 @@ function filledTaskList(tasklist){
         if(element.done == true ) {
             checked = 'checked';
         }
-        $list +='<input name="checkbox'+index+'" id="checkbox'+index+'" type="checkbox" value="'+index+'" '+checked+' onchange="CheckboxChange()">'+
+        $list +='<input name="checkbox'+index+'" data-id="'+index+'" id="checkbox'+index+'" type="checkbox" value="'+index+'" '+checked+' ">'+
             '<label for="checkbox'+index+'">'+element.name+'</label>';
     });
 
@@ -101,22 +104,36 @@ var getUrlParameter = function(paramName) {
     }
 }
 
-function CheckboxChange(){
-    $("#checkbox-v-2a:checked").each(function() {
-        $jsonFile[$id].tasks[$(this).val()].done = true ;
-    });
-    localStorage.setItem("listContent", JSON.stringify($jsonFile));
-}
+$(document).on("change","#view input:checkbox",function(event){
+    $idChkBox = $(this).attr("data-id");
+    $element = $jsonFile[$id].tasks[$idChkBox].done = !$jsonFile[$id].tasks[$idChkBox].done;
+    localStorage.setItem("taskList", JSON.stringify($jsonFile));
+});
 
 $(document).on("click","#addTask",function(event){
     $nextId = $("#listContent .ui-controlgroup-controls div").length ;
     console.log($nextId);
-    $content =$('<input name ="task'+$nextId+'" type="text"  placeholder="Votre tâche">');
+    $content =$('<input name ="task'+$nextId+'" type="text"  placeholder="Votre tâche n°'+($nextId+1)+'">');
 
     ($content).insertAfter("#listContent .ui-controlgroup-controls div:last-child");
     $("#form #listContent").trigger('create');
 });
 
 $(document).on("click","#saveTaskList",function(event){
-    console.log("saveTaskList");
+    event.preventDefault();
+    $element = ($id != 0) ? $jsonFile[$id] : {};
+    $element.name = $("#listContent #title").val();
+    $element.tasks = [];
+    $("#listContent .ui-controlgroup-controls div input").each(function(index, el) {
+        $isDone = ($element.tasks[index]) ? $element.tasks[index].done : false;
+        $element.tasks.push({ 'name': el.value, 'done': $isDone });
+    });
+    console.log($element);
+    if ($id){
+        $jsonFile[$id] = $element;
+    }
+    else {
+        $($jsonFile[$id]).extend($element);
+    }
+    localStorage.setItem("taskList", JSON.stringify($jsonFile));
 });
